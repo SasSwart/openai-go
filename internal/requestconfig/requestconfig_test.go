@@ -79,6 +79,7 @@ func BenchmarkNewRequestConfig(b *testing.B) {
 						opts = []requestconfig.RequestOption{
 							option.WithRequestBody("application/json", requestBodySizeTestCase.jsonPayload),
 						}
+						body = responses.ResponseNewParams{}
 					}
 
 					b.ResetTimer()

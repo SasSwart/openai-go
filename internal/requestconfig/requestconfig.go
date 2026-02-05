@@ -117,11 +117,12 @@ func NewRequestConfig(ctx context.Context, method string, u string, body any, ds
 		req.Header.Add(k, v)
 	}
 	cfg := RequestConfig{
-		MaxRetries:       2,
-		Context:          ctx,
-		Request:          req,
-		HTTPClient:       http.DefaultClient,
-		ResponseBodyInto: dst,
+		MaxRetries:          2,
+		Context:             ctx,
+		Request:             req,
+		HTTPClient:          http.DefaultClient,
+		ResponseBodyInto:    dst,
+		ShouldSerializeBody: true,
 	}
 	err = cfg.Apply(opts...)
 	if err != nil {
@@ -132,8 +133,7 @@ func NewRequestConfig(ctx context.Context, method string, u string, body any, ds
 
 	contentType := "application/json"
 
-	if cfg.Body == nil {
-
+	if cfg.ShouldSerializeBody {
 		if body, ok := body.(json.Marshaler); ok {
 			content, err := body.MarshalJSON()
 			if err != nil {
@@ -227,8 +227,9 @@ type RequestConfig struct {
 	ResponseBodyInto any
 	// ResponseInto copies the \*http.Response of the corresponding request into the
 	// given address
-	ResponseInto **http.Response
-	Body         io.Reader
+	ResponseInto        **http.Response
+	Body                io.Reader
+	ShouldSerializeBody bool
 }
 
 // middleware is exactly the same type as the Middleware type found in the [option] package,
