@@ -235,6 +235,10 @@ func WithResponseInto(dst **http.Response) RequestOption {
 // body accepts an io.Reader or raw []bytes.
 func WithRequestBody(contentType string, body any) RequestOption {
 	return requestconfig.RequestOptionFunc(func(r *requestconfig.RequestConfig) error {
+		// We don't want to serialize the request body passed into NewRequestConfig if this option is used to
+		// pass a custom body.
+		r.ShouldSerializeBody = false
+
 		if reader, ok := body.(io.Reader); ok {
 			r.Body = reader
 			return r.Apply(WithHeader("Content-Type", contentType))
